@@ -1,0 +1,189 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#101827">
+    <title>Sazón Urbano | Punto de Venta</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="app">
+
+    <!-- BARRA LATERAL -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">🍽️</div>
+            <div>
+                <h2>Sazón Urbano</h2>
+                <span>RESTAURANTE</span>
+            </div>
+        </div>
+
+        <div class="sidebar-label">MENÚ PRINCIPAL</div>
+
+        <nav class="navigation">
+            <a href="#" class="nav-link active">
+                <span>▦</span> Punto de venta
+            </a>
+            <a href="#" class="nav-link">
+                <span>▤</span> Pedidos
+            </a>
+            <a href="#" class="nav-link">
+                <span>▣</span> Productos
+            </a>
+            <a href="#" class="nav-link">
+                <span>▥</span> Inventario
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="user-avatar">AD</div>
+            <div class="user-info">
+                <strong>Administrador</strong>
+                <span>Panel de gestión</span>
+            </div>
+            <span class="user-status"></span>
+        </div>
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <p class="breadcrumb">Restaurante / Ventas</p>
+                <h1>Punto de venta</h1>
+            </div>
+
+            <div class="topbar-right">
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    Sistema local
+                </div>
+                <div class="date-display" id="current-date"></div>
+            </div>
+        </header>
+
+        <section class="welcome-section">
+            <div>
+                <h2>¡Bienvenido a Sazón Urbano! 👋</h2>
+                <p>Selecciona los productos para crear un nuevo pedido.</p>
+            </div>
+            <div class="welcome-icon">🍔</div>
+        </section>
+
+        <!-- BUSCADOR Y CATEGORÍAS -->
+        <section class="menu-section">
+
+            <div class="section-heading">
+                <div>
+                    <h2>Nuestro menú</h2>
+                    <p>Productos disponibles para la venta</p>
+                </div>
+
+                <div class="search-box">
+                    <span>⌕</span>
+                    <input
+                        type="text"
+                        id="search-input"
+                        placeholder="Buscar producto..."
+                    >
+                </div>
+            </div>
+
+            <div class="categories" id="categories">
+                <button class="category active" data-category="Todos">
+                    🍽️ Todos
+                </button>
+                <button class="category" data-category="Hamburguesas">
+                    🍔 Hamburguesas
+                </button>
+                <button class="category" data-category="Pizzas">
+                    🍕 Pizzas
+                </button>
+                <button class="category" data-category="Bebidas">
+                    🥤 Bebidas
+                </button>
+                <button class="category" data-category="Acompañamientos">
+                    🍟 Acompañamientos
+                </button>
+            </div>
+
+            <div class="products-grid" id="products-grid">
+                <!-- Los productos se generan con JavaScript -->
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- CARRITO DE COMPRAS -->
+    <aside class="cart-panel">
+
+        <div class="cart-header">
+            <div>
+                <h2>Pedido actual</h2>
+                <p>Detalle de la compra</p>
+            </div>
+            <span class="cart-icon">🛒</span>
+        </div>
+
+        <div class="order-details">
+            <div>
+                <span>Pedido</span>
+                <strong id="order-number">#001</strong>
+            </div>
+            <div>
+                <span>Tipo</span>
+                <strong>Para llevar</strong>
+            </div>
+        </div>
+
+        <div class="cart-title">
+            <h3>Productos seleccionados</h3>
+            <span id="cart-count">0 artículos</span>
+        </div>
+
+        <div class="cart-items" id="cart-items">
+            <div class="empty-cart">
+                <div>🛍️</div>
+                <h3>Tu carrito está vacío</h3>
+                <p>Selecciona productos del menú para comenzar.</p>
+            </div>
+        </div>
+
+        <div class="cart-summary">
+            <div>
+                <span>Subtotal</span>
+                <strong id="subtotal">$0</strong>
+            </div>
+            <div>
+                <span>Impuestos (0%)</span>
+                <strong id="tax">$0</strong>
+            </div>
+            <div class="total-row">
+                <span>Total a pagar</span>
+                <strong id="total">$0</strong>
+            </div>
+
+            <button id="checkout-button" class="checkout-button" disabled>
+                Registrar pedido →
+            </button>
+
+            <button id="clear-cart" class="clear-button">
+                Vaciar carrito
+            </button>
+        </div>
+
+    </aside>
+
+</div>
+
+<div id="notification" class="notification"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

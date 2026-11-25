@@ -1,0 +1,154 @@
+
+services:
+
+  # ==================================
+  # SERVIDOR DE BASE DE DATOS MYSQL
+  # ==================================
+  db:
+    image: mysql:8.0
+    container_name: sazon_mysql
+    restart: unless-stopped
+
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+    networks:
+      - app_network
+
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'mysqladmin ping -h 127.0.0.1 -uroot -p"$${MYSQL_ROOT_PASSWORD}" --silent'
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # ==================================
+  # BACKEND NODE.JS
+  # ==================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+
+    container_name: sazon_backend
+    restart: unless-stopped
+
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+
+
+    depends_on:
+      db:
+        condition: service_healthy
+
+    networks:
+      - app_network
+
+  # ==================================
+  # FRONTEND NGINX
+  # ==================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+
+    container_name: sazon_frontend
+    restart: unless-stopped
+
+    depends_on:
+      - backend
+
+    networks:
+      - app_network
+
+  
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: sazon_prometheus
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    networks:
+      - app_network
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: sazon_grafana
+    ports:
+      - "3001:3000"
+    networks:
+      - app_network
+    restart: unless-stopped
+
+
+  nginx:
+    image: nginx:alpine
+    container_name: sazon_nginx
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT}:80"
+      - "8443:443"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - app_network
+
+  wireguard:
+    image: lscr.io/linuxserver/wireguard:latest
+    container_name: sazon_wireguard
+    cap_add:
+      - NET_ADMIN
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: America/Bogota
+      SERVERURL: auto
+      SERVERPORT: 51820
+      PEERS: 1
+      PEERDNS: auto
+      INTERNAL_SUBNET: 10.13.13.0
+      LOG_CONFS: "true"
+    volumes:
+      - ./vpn/config:/config
+    ports:
+      - "51820:51820/udp"
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    restart: unless-stopped
+    networks:
+      - app_network
+
+# ==================================
+# RED INTERNA
+# ==================================
+networks:
+  app_network:
+    driver: bridge
+
+# ==================================
+# ALMACENAMIENTO PERSISTENTE
+# ==================================
+volumes:
+  mysql_data:
+    name: sazon_mysql_data

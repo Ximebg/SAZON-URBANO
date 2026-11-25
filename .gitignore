@@ -1,0 +1,19 @@
+# Variables de entorno y contraseñas
+.env
+
+# Dependencias
+node_modules/
+
+# Claves privadas SSL
+nginx/ssl/*.key
+
+# Configuración privada de WireGuard
+vpn/config/
+
+# Respaldos de la base de datos
+scripts/backups/
+
+# Archivos temporales
+*.log
+.DS_Store
+Thumbs.db
